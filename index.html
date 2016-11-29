@@ -20,7 +20,7 @@
 
     <section class="main-content">
       <h2>
-<a id="-velkominn-í-lokaverkefni-í-linux" class="anchor" href="#-velkominn-%C3%AD-lokaverkefni-%C3%AD-linux" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>### Velkominn í Lokaverkefni í linux.</h2>
+<a id="velkominn-í-lokaverkefni-í-linux" class="anchor" href="#velkominn-%C3%AD-lokaverkefni-%C3%AD-linux" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Velkominn í Lokaverkefni í linux.</h2>
 
 <p>Í þessu lokaverkefni er ég búinn að gera tutorial. Í þessum tutorial kemur framm hvernig maður setur upp ubuntu server, hvernig þú setur upp docker container, mysql, PHPMyAdmin.</p>
 
@@ -78,29 +78,48 @@ done´</p>
 
 <p>Næst gerum við töflu sem heitir Logs. Við ætlum að nota basic mysql skipun í það.</p>
 
-<p><code>mysql -u root -p //svo skrifaru inn passwordið þitt</code></p>
+<p><code>mysql -u root -p //svo skrifaru inn passwordið þitt</code>
+<code>CREATE DATABASE lokaverkefni;</code>
+<code>USE lokaverkefni;</code>
+<code>CREATE TABLE IF NOT EXISTS Logs(</code>
+ <code>ID int(5) NOT NULL AUTO_INCREMENT,</code>
+ <code>Date Date DEFAULT NULL,</code>
+ <code>User varchar(20) DEFAULT NULL,</code>
+ <code>Memory varchar(20) DEFAULT NULL,</code>
+ <code>IP varchar(20) DEFAULT NULL,</code>
+ <code>Hostname varchar(20) DEFAULT NULL,</code>
+ <code>PRIMARY KEY(ID)</code>
+<code>);</code></p>
 
-<p><code>CREATE DATABASE lokaverkefni;</code></p>
+<p>Nú þegar þú hefur gert Logs töfluna í mysql gerir þú aðra scriptu sem heitir logscript og sem við keyrum með cron til að setja í töfluna okkar á eftir</p>
 
-<p><code>USE lokaverkefni;</code></p>
+<p><code>touch logscript</code>
+<code>sudo chmod 777 logscript</code>
+<code>nano logscript</code></p>
 
-<p><code>CREATE TABLE IF NOT EXISTS Logs(</code></p>
+<p>Þú ættir nú að vita nú þegar hvað þetta gerir. Næst förum skrifum við inní scriptuna</p>
 
-<p> <code>ID int(5) NOT NULL AUTO_INCREMENT,</code></p>
+<p><code>DATE="$(date +'%Y-%M-%D')"</code>
+<code>USERNAME=$USER</code>
+<code>MEMORY=grep MemTotal /proc/meminfo | awk '{print }'</code>
+<code>MYIP=ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print }'</code>
+<code>MYHOSTNAME=$HOSTNAME</code></p>
 
-<p> <code>Date Date DEFAULT NULL,</code></p>
+<p><code>mysql -uroot -proot USERNAME &lt;&lt; EOF</code>
+<code>insert into Logs (Date,User,Memory,IP,Hostname) values '$DATE' , '$USERNAME', '$MEMORY' , '$MYIP' , '$MYHOSTNAME';</code>
+<code>EOF</code></p>
 
-<p> <code>User varchar(20) DEFAULT NULL,</code></p>
+<h3>
+<a id="cron" class="anchor" href="#cron" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cron</h3>
 
-<p> <code>Memory varchar(20) DEFAULT NULL,</code></p>
+<p>Við þurfum að láta skriptuna okkar keyrast klukkan 12 á hverjum degi.
+Skrifum í terminal: <code>crontab -e</code> til þess að opna cron fileinn.
+Svo setjum við cron skriptuna okkar neðst í cron fileinn.</p>
 
-<p> <code>IP varchar(20) DEFAULT NULL,</code></p>
+<p><code>00 12 * * * root /.logscript</code></p>
 
-<p> <code>Hostname varchar(20) DEFAULT NULL,</code></p>
-
-<p> <code>PRIMARY KEY(ID)</code></p>
-
-<p><code>);</code></p>
+<h3>
+<a id="smá-moli-um-sql-injections" class="anchor" href="#sm%C3%A1-moli-um-sql-injections" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Smá Moli um SQL INJECTIONS.</h3>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/palmiv/-Lin_lokaverkefni">Lin_lokaverkefni</a> is maintained by <a href="https://github.com/palmiv">palmiv</a>.</span>
