@@ -57,9 +57,50 @@ Til að setja upp MySql skallt þú keyra inn þessa skipun
 Ef þú hefur enga reynslu með MySql mæli ég með að læra basic <a href="http://www.w3schools.com/sql/">hér</a></p>
 
 <h3>
-<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a id="docker" class="anchor" href="#docker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Docker</h3>
 
-<p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
+<p>Nú þegar við höfum install'að mysql þá förum við í næsta og það er Docker. Til að install'a Docker þá keyrum við inn eftifarandi kóða:</p>
+
+<p><code>docker pull httpd</code>
+<code>docker pull eboraas/apache</code>
+<code>docker run -p 80:80 -p 443:443 -v /home/user/mysite/:/var/www/html/ -d eboraas/apache</code> </p>
+
+<p>Nú þegar við erum komin með docker ætlum við að gera scriptu sem býr til sql notendur:
+<code>touch dockerscripta</code>
+<code>sudo chmod 777 dockerskripta</code>
+<code>nano dockerscripta</code></p>
+
+<p>það sem þetta gerir er það að þú býrð til skriptuna. Gefur henni 777 leyfi sem er öll leyfin sem þú getur gefið. Síðast er það Nano sem gerir þér kleyft að edita skriptuna. Næst skaltu skrifa inní skriptuna
+´for i in {1..15}
+do
+    mysql -uroot -proot -e "CREATE USER 'notandi_$i'@'localhost' IDENTIFIED BY 'password_$i'"
+done´</p>
+
+<p>Næst gerum við töflu sem heitir Logs. Við ætlum að nota basic mysql skipun í það.</p>
+
+<p><code>mysql -u root -p //svo skrifaru inn passwordið þitt</code></p>
+
+<p><code>CREATE DATABASE lokaverkefni;</code></p>
+
+<p><code>USE lokaverkefni;</code></p>
+
+<p><code>CREATE TABLE IF NOT EXISTS Logs(</code></p>
+
+<p> <code>ID int(5) NOT NULL AUTO_INCREMENT,</code></p>
+
+<p> <code>Date Date DEFAULT NULL,</code></p>
+
+<p> <code>User varchar(20) DEFAULT NULL,</code></p>
+
+<p> <code>Memory varchar(20) DEFAULT NULL,</code></p>
+
+<p> <code>IP varchar(20) DEFAULT NULL,</code></p>
+
+<p> <code>Hostname varchar(20) DEFAULT NULL,</code></p>
+
+<p> <code>PRIMARY KEY(ID)</code></p>
+
+<p><code>);</code></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/palmiv/-Lin_lokaverkefni">Lin_lokaverkefni</a> is maintained by <a href="https://github.com/palmiv">palmiv</a>.</span>
