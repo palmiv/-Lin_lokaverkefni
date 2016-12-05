@@ -32,12 +32,12 @@
 <h3>
 <a id="apache" class="anchor" href="#apache" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Apache</h3>
 
-<p>Þegar þú hefur lokið install'ið á Ubuntu ertu kominn í næsta skref setja upp Apache. Byrjum á því að keyra 
-<code>sudo apt-get update</code>
-<code>sudo apt-get upgrade</code>
-<code>sudo apt-get install apache2</code></p>
+<p>Þegar þú hefur lokið install'ið á Ubuntu ertu kominn í næsta skref setja upp Apache. Byrjum á því að keyra <br>
+<code>sudo apt-get update</code><br>
+<code>sudo apt-get upgrade</code><br>
+<code>sudo apt-get install apache2</code><br></p>
 
-<p>Til að sjá IP töluna ykkar skalltu keyra 
+<p>Til að sjá IP töluna ykkar skalltu keyra<br>
 <code>ifconfig eth0 | grep inet | awk '{ print $2 }'</code></p>
 
 <p>Smá um apache: Default port sem Apache hlustar á er 80 og á https er það 443.</p>
@@ -50,9 +50,9 @@ Og að slökkva
 <h3>
 <a id="mysql" class="anchor" href="#mysql" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MySQL</h3>
 
-<p>MySQL er eitt mest notaði gagnagrunnsforrit í dag. 
-Til að setja upp MySql skallt þú keyra inn þessa skipun
-<code>sudo apt-get install mysql-server</code>
+<p>MySQL er eitt mest notaði gagnagrunnsforrit í dag.
+Til að setja upp MySql skallt þú keyra inn þessa skipun<br>
+<code>sudo apt-get install mysql-server</code><br>
 þá er beðið þið um að gera root password. Gott er að vera með bæði öruggt og eitthvað auðvelt að muna.
 Ef þú hefur enga reynslu með MySql mæli ég með að læra basic <a href="http://www.w3schools.com/sql/">hér</a></p>
 
@@ -61,74 +61,87 @@ Ef þú hefur enga reynslu með MySql mæli ég með að læra basic <a href="ht
 
 <p>Nú þegar við höfum install'að mysql þá förum við í næsta og það er Docker. Til að install'a Docker þá keyrum við inn eftifarandi kóða:</p>
 
-<p><code>docker pull httpd</code>
-<code>docker pull eboraas/apache</code>
-<code>docker run -p 80:80 -p 443:443 -v /home/user/mysite/:/var/www/html/ -d eboraas/apache</code> </p>
+<p><code>docker pull httpd</code><br>
+<code>docker pull eboraas/apache</code><br>
+<code>docker run -p 80:80 -p 443:443 -v /home/user/mysite/:/var/www/html/ -d eboraas/apache</code><br> </p>
 
 <p>Nú þegar við erum komin með docker ætlum við að gera scriptu sem býr til sql notendur:
-<code>touch dockerscripta</code>
-<code>sudo chmod 777 dockerskripta</code>
-<code>nano dockerscripta</code></p>
+<code>touch dockerscripta</code><br>
+<code>sudo chmod 777 dockerskripta</code><br>
+<code>nano dockerscripta</code><br></p>
 
-<p>það sem þetta gerir er það að þú býrð til skriptuna. Gefur henni 777 leyfi sem er öll leyfin sem þú getur gefið. Síðast er það Nano sem gerir þér kleyft að edita skriptuna. Næst skaltu skrifa inní skriptuna
-´for i in {1..15}
+<p>það sem þetta gerir er það að þú býrð til skriptuna. Gefur henni 777 leyfi sem er öll leyfin sem þú getur gefið. Síðast er það Nano sem gerir þér kleyft að edita skriptuna. Næst skaltu skrifa inní skriptuna<br>
+<pre><code>´for i in {1..15}
 do
     mysql -uroot -proot -e "CREATE USER 'notandi_$i'@'localhost' IDENTIFIED BY 'password_$i'"
-done´</p>
+done´</code></pre></p><br>
 
-<p>Næst gerum við töflu sem heitir Logs. Við ætlum að nota basic mysql skipun í það.</p>
+<p>Næst gerum við töflu sem heitir Logs. Við ætlum að nota basic mysql skipun í það.</p><br>
 
-<p><code>mysql -u root -p //svo skrifaru inn passwordið þitt</code>
-<code>CREATE DATABASE lokaverkefni;</code>
-<code>USE lokaverkefni;</code>
-<code>CREATE TABLE IF NOT EXISTS Logs(</code>
- <code>ID int(5) NOT NULL AUTO_INCREMENT,</code>
- <code>Date Date DEFAULT NULL,</code>
- <code>User varchar(20) DEFAULT NULL,</code>
- <code>Memory varchar(20) DEFAULT NULL,</code>
- <code>IP varchar(20) DEFAULT NULL,</code>
- <code>Hostname varchar(20) DEFAULT NULL,</code>
- <code>PRIMARY KEY(ID)</code>
-<code>);</code></p>
+<p><code>mysql -u root -p</code>   svo skrifaru inn passwordið þitt<br>
+  <br>
+<code> CREATE DATABASE lokaverkefni;<br>
+ USE lokaverkefni;</code>
+ <pre><code>CREATE TABLE IF NOT EXISTS Logs,
+ ID int(5) NOT NULL AUTO_INCREMENT,
+ Date Date DEFAULT NULL,
+ User varchar(20) DEFAULT NULL,
+ Memory varchar(20) DEFAULT NULL,
+ IP varchar(20) DEFAULT NULL,
+ Hostname varchar(20) DEFAULT NULL,
+ PRIMARY KEY(ID)
+);<br></code></pre></p><br>
 
 <p>Nú þegar þú hefur gert Logs töfluna í mysql gerir þú aðra scriptu sem heitir logscript og sem við keyrum með cron til að setja í töfluna okkar á eftir</p>
 
-<p><code>touch logscript</code>
-<code>sudo chmod 777 logscript</code>
-<code>nano logscript</code></p>
+<p><code>touch logscript</code><br>
+<code>sudo chmod 777 logscript</code><br>
+<code>nano logscript</code><br></p>
 
 <p>Þú ættir nú að vita nú þegar hvað þetta gerir. Næst förum skrifum við inní scriptuna</p>
 
-<p><code>DATE="$(date +'%Y-%M-%D')"</code>
+<p><pre><code>DATE="$(date +'%Y-%M-%D')"</code>
 <code>USERNAME=$USER</code>
 <code>MEMORY=grep MemTotal /proc/meminfo | awk '{print }'</code>
 <code>MYIP=ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print }'</code>
-<code>MYHOSTNAME=$HOSTNAME</code></p>
+<code>MYHOSTNAME=$HOSTNAME</code><br></p>
 
-<p><code>mysql -uroot -proot USERNAME &lt;&lt; EOF</code>
-<code>insert into Logs (Date,User,Memory,IP,Hostname) values '$DATE' , '$USERNAME', '$MEMORY' , '$MYIP' , '$MYHOSTNAME';</code>
-<code>EOF</code></p>
+<code>mysql -uroot -proot USERNAME &lt;&lt; EOF</code><br>
+<code>insert into Logs (Date,User,Memory,IP,Hostname) values '$DATE' , '$USERNAME', '$MEMORY' , '$MYIP' , '$MYHOSTNAME';</code><br>
+<code>EOF</code><br></pre>
 
 <h3>
 <a id="cron" class="anchor" href="#cron" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cron</h3>
 
-<p>Við þurfum að láta skriptuna okkar keyrast klukkan 12 á hverjum degi.
-Skrifum í terminal: <code>crontab -e</code> til þess að opna cron fileinn.
-Svo setjum við cron skriptuna okkar neðst í cron fileinn.</p>
-
-<p><code>00 12 * * * root /.logscript</code></p>
+<p>Við látum skriptuna okkar keyrast klukkan 12 á hverjum degi.
+Skrifum í terminal:<br> <code>crontab -e</code><br>   til þess að opna cron fileinn.
+Svo setjum við cron skriptuna okkar neðst í cron fileinn.<br>
+<code>00 12 * * * root /.logscript</code></p>
 
 <h3>
 <a id="smá-moli-um-sql-injections" class="anchor" href="#sm%C3%A1-moli-um-sql-injections" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Smá Moli um SQL INJECTIONS.</h3>
+<p>Gott svar á ensku:<br><br>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/palmiv/-Lin_lokaverkefni">Lin_lokaverkefni</a> is maintained by <a href="https://github.com/palmiv">palmiv</a>.</span>
+SQL Injection is "a code injection technique that exploits a security vulnerability occurring in the database layer of an application". In other words it's SQL code injected in as user input inside a query.<br><br>
 
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
+SQL Injections can manipulate data (delete, update, add ecc...) and corrupt or delete tables of the database. I'm not aware of SQL Injections manipulating scripts though.<br><br>
+
+Let's say in your PHP script you are expecting (as user input) a username and a password from the login form that are later used inside a query such as:<br><br>
+
+<code>SELECT Id FROM Users WHERE Name = $name AND Password = $password;</code><br>
+The user can insert inside $name and as <code> $password </code> whatever he likes (for example trough an &lt;input&gt;). Let's imagine he adds a name such as <code>"1 OR 1 = 1; --"</code>, the query will now look like:<br><br>
+
+<code>SELECT Id FROM Users WHERE Name = 1 OR 1 = 1; -- AND Password = $password;</code><br>
+and then, after the ; I could add another query or make the script think that the username and the password actually exists.<br><br>
+
+Notice that <code>-- AND Password = $password;</code> is a SQL comment and will therefore be ignored.<br><br>
+
+If you are using PHP < 5 then you should look for <code>mysql_real_escape_string()</code> and use it to escape user inputs before embedding it inside a query.<br><br>
+
+If you are using PHP5+ you should use PDO or the mysqli extension which can prevent this problem via prepared statements.<br><br>
 
     </section>
 
-  
+
   </body>
 </html>
